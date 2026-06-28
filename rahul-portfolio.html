@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rahul Singh Rawat · Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#000;--paper:#fff;--gray:#aaa;
+  --b:3px solid #000;
+  --font-display:'Bangers',Impact,cursive;
+  --font-body:'Special Elite',Georgia,serif;
+  --font-mono:'Courier Prime','Courier New',monospace;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:#fff;color:#000;font-family:var(--font-body);overflow-x:hidden}
+
+/* ── HALFTONE & TEXTURES ───────────────────── */
+.ht{background-image:radial-gradient(circle,#000 1.2px,transparent 1.2px);background-size:7px 7px}
+.ht-fine{background-image:radial-gradient(circle,#000 .8px,transparent .8px);background-size:5px 5px}
+.speedlines{position:absolute;inset:0;pointer-events:none;background:repeating-conic-gradient(from 0deg at 50% 50%,#000 0deg 1.5deg,transparent 1.5deg 10deg);opacity:.06}
+.hatching{background-image:repeating-linear-gradient(45deg,#000 0,#000 1px,transparent 0,transparent 8px)}
+
+/* ── CINEMATIC SCROLL SYSTEM ─────────────────
+   Each section is a "scene". Panels fly in like comic panels. */
+
+/* Scene wrapper */
+.scene{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  padding:80px 40px;
+}
+.scene-dark{background:#000;color:#fff}
+.scene-light{background:#fff;color:#000}
+
+/* Panel animation base */
+[data-panel]{
+  opacity:0;
+  will-change:transform,opacity;
+  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.34,1.56,.64,1);
+}
+[data-panel="from-left"]{transform:translateX(-80px) rotate(-3deg)}
+[data-panel="from-right"]{transform:translateX(80px) rotate(3deg)}
+[data-panel="from-bottom"]{transform:translateY(80px) scale(.94)}
+[data-panel="slam"]{transform:scale(1.08) rotate(-2deg)}
+[data-panel="fade"]{transform:translateY(20px)}
+[data-panel].visible{opacity:1;transform:none}
+
+/* Stagger children */
+[data-stagger]>*{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .45s ease, transform .45s cubic-bezier(.34,1.56,.64,1);
+}
+[data-stagger].visible>*:nth-child(1){opacity:1;transform:none;transition-delay:.05s}
+[data-stagger].visible>*:nth-child(2){opacity:1;transform:none;transition-delay:.15s}
+[data-stagger].visible>*:nth-child(3){opacity:1;transform:none;transition-delay:.25s}
+[data-stagger].visible>*:nth-child(4){opacity:1;transform:none;transition-delay:.35s}
+[data-stagger].visible>*:nth-child(5){opacity:1;transform:none;transition-delay:.45s}
+[data-stagger].visible>*:nth-child(6){opacity:1;transform:none;transition-delay:.55s}
+
+/* ── NAV ─────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:#000;border-bottom:3px solid #fff;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 28px;
+}
+.nav-logo{
+  font-family:var(--font-display);font-size:18px;letter-spacing:.15em;color:#fff;
+  text-decoration:none;white-space:nowrap;
+}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{
+  color:rgba(255,255,255,.55);text-decoration:none;
+  font-family:var(--font-body);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;
+  transition:color .2s;
+}
+.nav-links a:hover{color:#fff}
+.nav-cta{
+  display:inline-block;background:#fff;color:#000;
+  font-family:var(--font-display);font-size:14px;
+  letter-spacing:.1em;padding:5px 16px;
+  text-decoration:none;border:2px solid #fff;
+  transition:transform .12s, background .15s;
+  white-space:nowrap;
+}
+.nav-cta:hover{background:#000;color:#fff;transform:translate(-2px,-2px)}
+
+/* ── TYPOGRAPHY ──────────────────────────────── */
+.sfx{
+  font-family:var(--font-display);letter-spacing:.06em;
+  color:#fff;-webkit-text-stroke:3px #000;
+  text-shadow:6px 6px 0 #000;display:inline-block;
+}
+.sfx-inv{
+  font-family:var(--font-display);letter-spacing:.06em;
+  color:#000;-webkit-text-stroke:2px #000;
+  text-shadow:5px 5px 0 rgba(0,0,0,.15);display:inline-block;
+}
+.cap{
+  display:inline-block;background:#000;color:#fff;
+  font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  padding:3px 12px;font-family:var(--font-body);
+  margin-bottom:12px;
+}
+.cap-outline{
+  display:inline-block;border:2px solid rgba(255,255,255,.3);color:rgba(255,255,255,.6);
+  font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  padding:3px 12px;font-family:var(--font-body);margin-bottom:12px;
+}
+.cap-outline-dark{
+  display:inline-block;border:2px solid #000;color:#000;
+  font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  padding:3px 12px;font-family:var(--font-body);margin-bottom:12px;
+}
+.chapter-header{
+  display:flex;align-items:center;gap:16px;
+  padding:12px 28px;background:#000;margin-bottom:0;
+}
+.chapter-header .num{font-family:var(--font-display);font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.2em}
+.chapter-header .line{flex:1;height:1px;background:rgba(255,255,255,.15)}
+.chapter-header .title{font-family:var(--font-display);font-size:20px;color:#fff;letter-spacing:.15em}
+
+/* ── COMIC PANEL BORDER ─────────────────────── */
+.comic-panel{
+  border:3px solid #000;background:#fff;
+  position:relative;overflow:hidden;
+  padding:28px;
+}
+.comic-panel-dark{
+  border:3px solid #000;background:#000;
+  position:relative;overflow:hidden;
+  padding:28px;
+}
+.panel-shadow{
+  box-shadow:6px 6px 0 #000;
+}
+.panel-shadow-w{
+  box-shadow:6px 6px 0 rgba(255,255,255,.15);
+}
+
+/* ── SKILL TAGS ─────────────────────────────── */
+.tag{
+  display:inline-block;border:2px solid #000;padding:4px 12px;
+  font-family:var(--font-display);font-size:15px;letter-spacing:.05em;
+  margin:3px;cursor:default;transition:transform .12s;
+}
+.tag:hover{transform:translate(-2px,-3px) rotate(-1deg)}
+.tag-fill{background:#000;color:#fff}
+.tag-w{border:2px solid rgba(255,255,255,.4);color:rgba(255,255,255,.8);display:inline-block;padding:4px 12px;font-family:var(--font-display);font-size:15px;letter-spacing:.05em;margin:3px;transition:transform .12s}
+.tag-w:hover{transform:translate(-2px,-3px)}
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btn-primary{
+  display:inline-block;background:#fff;color:#000;
+  padding:10px 24px;font-family:var(--font-display);
+  font-size:18px;letter-spacing:.1em;text-decoration:none;
+  border:3px solid #fff;transition:transform .12s, background .15s;
+}
+.btn-primary:hover{background:#000;color:#fff;transform:translate(-3px,-3px)}
+.btn-outline{
+  display:inline-block;border:3px solid #fff;color:#fff;
+  padding:10px 24px;font-family:var(--font-display);
+  font-size:18px;letter-spacing:.1em;text-decoration:none;
+  transition:transform .12s, background .15s;
+}
+.btn-outline:hover{background:#fff;color:#000;transform:translate(-3px,-3px)}
+.btn-k{
+  display:inline-block;background:#000;color:#fff;
+  padding:8px 20px;font-family:var(--font-display);
+  font-size:16px;letter-spacing:.1em;text-decoration:none;
+  border:2px solid #000;transition:transform .12s;
+}
+.btn-k:hover{transform:translate(-2px,-2px)}
+.btn-ko{
+  display:inline-block;border:2px solid #000;color:#000;
+  padding:8px 20px;font-family:var(--font-display);
+  font-size:16px;letter-spacing:.1em;text-decoration:none;
+  transition:transform .12s, background .15s;
+}
+.btn-ko:hover{background:#000;color:#fff;transform:translate(-2px,-2px)}
+
+/* ── GRID LAYOUTS ────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.grid-32{display:grid;grid-template-columns:3fr 2fr;gap:6px}
+.grid-23{display:grid;grid-template-columns:2fr 3fr;gap:6px}
+
+/* ── TBOX ─────────────────────────────────────── */
+.tbox{border:2px solid #000;padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;margin-bottom:10px}
+.tbox-dark{border:1px solid rgba(255,255,255,.2);padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;color:rgba(255,255,255,.8);margin-bottom:10px}
+
+/* ── CONTACT ROW ─────────────────────────────── */
+.c-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:10px}
+.c-label{font-family:var(--font-display);font-size:15px;letter-spacing:.08em;color:rgba(255,255,255,.4);min-width:90px;flex-shrink:0}
+.c-val{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,.8);word-break:break-all;line-height:1.5}
+.c-val a{color:rgba(255,255,255,.8);text-decoration:none}
+.c-val a:hover{color:#fff;text-decoration:underline}
+
+/* ── CODING PROFILE CARDS ───────────────────── */
+.code-card{
+  border:3px solid #000;padding:18px;
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:8px;text-decoration:none;
+  color:#000;background:#fff;
+  transition:transform .15s, box-shadow .15s;
+  position:relative;overflow:hidden;
+}
+.code-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 #000}
+.code-card-icon{
+  width:52px;height:52px;background:#000;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:11px;
+  letter-spacing:.04em;flex-shrink:0;text-align:center;line-height:1.2;
+}
+.code-card-label{font-family:var(--font-display);font-size:20px;letter-spacing:.06em}
+.code-card-sub{font-family:var(--font-body);font-size:11px;color:#555;margin-top:2px}
+
+/* ── CERT CARD ───────────────────────────────── */
+.cert-card{
+  border:3px solid #000;padding:16px;
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:8px;text-decoration:none;
+  color:#000;background:#fff;
+  transition:transform .15s, box-shadow .15s;
+  position:relative;overflow:hidden;
+}
+.cert-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 #000}
+.cert-icon{
+  width:52px;height:52px;background:#000;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:11px;
+  letter-spacing:.03em;flex-shrink:0;text-align:center;line-height:1.2;
+}
+.cert-card .verify{
+  display:inline-block;margin-top:4px;font-family:var(--font-display);
+  font-size:11px;letter-spacing:.08em;
+  border:1.5px solid #000;padding:2px 8px;
+}
+
+/* ── PROJECT CARD ───────────────────────────── */
+.proj-header{
+  background:#000;color:#fff;display:inline-block;
+  padding:6px 18px;font-family:var(--font-display);
+  font-size:clamp(24px,3.5vw,36px);letter-spacing:.08em;
+  clip-path:polygon(0 0,100% 0,97% 100%,3% 100%);
+  margin-bottom:10px;
+}
+.proj-header-inv{
+  background:#fff;color:#000;display:inline-block;
+  padding:6px 18px;font-family:var(--font-display);
+  font-size:clamp(24px,3.5vw,36px);letter-spacing:.08em;
+  clip-path:polygon(0 0,100% 0,97% 100%,3% 100%);
+  margin-bottom:10px;
+}
+
+/* ── EDU CARD ───────────────────────────────── */
+.edu-item{border-left:5px solid #000;padding:14px 18px;margin-bottom:14px}
+.edu-score{
+  background:#000;color:#fff;padding:4px 14px;
+  font-family:var(--font-display);font-size:20px;
+  letter-spacing:.08em;display:inline-block;
+}
+
+/* ── STAT ─────────────────────────────────────── */
+.stat-big{font-family:var(--font-display);font-size:clamp(36px,6vw,72px);line-height:1;letter-spacing:.04em}
+.stat-lbl{font-family:var(--font-body);font-size:10px;letter-spacing:.15em;text-transform:uppercase;margin-top:4px;color:#666}
+
+/* ── SCROLL INDICATOR ───────────────────────── */
+.scroll-hint{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-body);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.9}}
+.scroll-arrow{display:block;text-align:center;margin-top:6px;animation:bounce 1.5s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── HORIZONTAL DIVIDER ─────────────────────── */
+.divider{height:4px;background:#000;width:100%}
+.divider-w{height:3px;background:#fff;width:100%}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .grid-2,.grid-3,.grid-32,.grid-23{grid-template-columns:1fr}
+  .scene{padding:60px 20px}
+  nav{padding:8px 16px}
+  .nav-links{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-panel],[data-stagger]>*{opacity:1!important;transform:none!important;transition:none!important}
+  *{animation:none!important}
+}
+
+/* ── PROGRESS BAR ───────────────────────────── */
+#progress{
+  position:fixed;top:0;left:0;height:3px;
+  background:#fff;z-index:9999;width:0%;
+  transition:width .1s linear;mix-blend-mode:difference;
+}
+
+/* ── CURSOR SPLASH ───────────────────────────── */
+.splash{
+  position:fixed;pointer-events:none;
+  font-family:var(--font-display);font-size:22px;
+  letter-spacing:.05em;z-index:9998;
+  animation:splashAnim .6s ease forwards;
+  white-space:nowrap;
+}
+.splash-dark{
+  color:#fff;
+  text-shadow:2px 2px 0 #000, -1px -1px 0 #000;
+}
+.splash-light{
+  color:#000;
+  text-shadow:2px 2px 0 rgba(255,255,255,.6);
+}
+@keyframes splashAnim{
+  0%{opacity:1;transform:scale(.5) rotate(-5deg) translateY(0)}
+  60%{opacity:1;transform:scale(1.1) rotate(3deg) translateY(-12px)}
+  100%{opacity:0;transform:scale(.9) rotate(-2deg) translateY(-24px)}
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- NAV -->
+<!-- ══════════════════════════════════════════════ -->
+<nav aria-label="Portfolio navigation">
+  <a class="nav-logo" href="#hero">RSR · #01</a>
+  <ul class="nav-links">
+    <li><a href="#experience">Origin</a></li>
+    <li><a href="#projects">Missions</a></li>
+    <li><a href="#skills">Arsenal</a></li>
+    <li><a href="#coding">Profiles</a></li>
+    <li><a href="#education">Academy</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#contact">Signal</a></li>
+  </ul>
+  <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="nav-cta">↓ RESUME</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCENE 0 — HERO / COVER -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="hero" class="scene scene-dark" style="min-height:100vh;padding-top:60px">
+
+  <!-- Speed lines -->
+  <div class="speedlines" aria-hidden="true"></div>
+  <!-- Halftone -->
+  <div class="ht" style="position:absolute;inset:0;opacity:.07;pointer-events:none" aria-hidden="true"></div>
+
+  <!-- Corner labels -->
+  <div style="position:absolute;top:70px;left:28px" aria-hidden="true">
+    <div style="background:#fff;color:#000;font-family:var(--font-display);font-size:11px;letter-spacing:.15em;padding:3px 10px;margin-bottom:4px">BACKEND DEVELOPER</div>
+    <div style="color:rgba(255,255,255,.3);font-family:var(--font-body);font-size:9px;letter-spacing:.1em">ISSUE #01 · 2024</div>
+  </div>
+  <div style="position:absolute;top:70px;right:28px;border:2px solid rgba(255,255,255,.25);padding:4px 10px;font-family:var(--font-display);color:rgba(255,255,255,.35);font-size:11px;letter-spacing:.1em" aria-hidden="true">FREE · ₹0</div>
+
+  <!-- Hero content -->
+  <div style="text-align:center;position:relative;z-index:2;max-width:800px;margin:0 auto">
+
+    <div data-panel="fade" style="font-family:var(--font-display);font-size:clamp(10px,1.4vw,13px);letter-spacing:.4em;color:rgba(255,255,255,.4);margin-bottom:12px;text-transform:uppercase">The Adventures of</div>
+
+    <h1 data-panel="slam" style="font-family:var(--font-display);font-size:clamp(60px,13vw,140px);color:#fff;-webkit-text-stroke:0;text-shadow:none;line-height:.9;position:relative;margin-bottom:0">
+      <span style="display:block;position:relative">
+        <span style="position:relative;z-index:1">RAHUL</span>
+        <span aria-hidden="true" style="position:absolute;top:5px;left:5px;color:#000;z-index:0;display:block;width:100%">RAHUL</span>
+      </span>
+      <span style="display:block;position:relative">
+        <span style="position:relative;z-index:1">SINGH</span>
+        <span aria-hidden="true" style="position:absolute;top:5px;left:5px;color:#000;z-index:0;display:block;width:100%">SINGH</span>
+      </span>
+      <span style="display:block;position:relative">
+        <span style="position:relative;z-index:1">RAWAT</span>
+        <span aria-hidden="true" style="position:absolute;top:5px;left:5px;color:#000;z-index:0;display:block;width:100%">RAWAT</span>
+      </span>
+    </h1>
+
+    <div data-panel="from-bottom" style="margin:20px 0 12px">
+      <div style="background:#fff;display:inline-block;padding:8px 32px">
+        <span style="font-family:var(--font-display);font-size:clamp(16px,2.5vw,26px);color:#000;letter-spacing:.15em">BACKEND DEVELOPER</span>
+      </div>
+    </div>
+
+    <div data-panel="fade" style="color:rgba(255,255,255,.3);font-family:var(--font-body);font-size:10px;letter-spacing:.1em;margin-bottom:32px">
+      NODE.JS · REDIS · EXPRESS.JS · PHP LARAVEL · MONGODB · REACT.JS
+    </div>
+
+    <div data-panel="from-bottom" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+      <a href="#projects" class="btn-primary">VIEW MISSIONS</a>
+      <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="btn-outline">↓ DOWNLOAD RESUME</a>
+      <a href="#contact" class="btn-outline">SEND SIGNAL</a>
+    </div>
+
+    <!-- Social strip -->
+    <div data-panel="fade" style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+      <a href="https://github.com/rahul-r8488" target="_blank" rel="noopener" style="color:rgba(255,255,255,.4);font-family:var(--font-body);font-size:10px;letter-spacing:.1em;text-decoration:none;text-transform:uppercase;transition:color .2s">GitHub</a>
+      <a href="https://linkedin.com/in/rahul-singh-rawat-1082b3258" target="_blank" rel="noopener" style="color:rgba(255,255,255,.4);font-family:var(--font-body);font-size:10px;letter-spacing:.1em;text-decoration:none;text-transform:uppercase;transition:color .2s">LinkedIn</a>
+      <a href="https://leetcode.com/u/RYUGA8488/" target="_blank" rel="noopener" style="color:rgba(255,255,255,.4);font-family:var(--font-body);font-size:10px;letter-spacing:.1em;text-decoration:none;text-transform:uppercase;transition:color .2s">LeetCode</a>
+      <a href="https://codeforces.com/profile/RYUGA8488" target="_blank" rel="noopener" style="color:rgba(255,255,255,.4);font-family:var(--font-body);font-size:10px;letter-spacing:.1em;text-decoration:none;text-transform:uppercase;transition:color .2s">Codeforces</a>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint" style="color:rgba(255,255,255,.3)" aria-hidden="true">
+    SCROLL TO ENTER THE STORY
+    <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER I — THE ORIGIN ARC -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER I</span>
+  <div class="line"></div>
+  <span class="title">THE ORIGIN ARC</span>
+  <div class="line"></div>
+</div>
+
+<section id="experience" class="scene scene-light" style="min-height:auto;padding:40px">
+
+  <div class="grid-32" style="gap:6px;max-width:1200px;margin:0 auto;width:100%">
+
+    <!-- Main experience panel -->
+    <div class="comic-panel panel-shadow" data-panel="from-left">
+      <div class="speedlines" style="opacity:.04" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div class="cap">Internship · Nov 2025 – June 2026</div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(36px,5vw,64px);line-height:.9;margin-bottom:8px">ASPIA<br>INFOTECH</h2>
+        <div style="font-family:var(--font-body);font-size:11px;color:#777;margin-bottom:16px;letter-spacing:.04em">Remote · Backend Development Intern</div>
+
+        <div style="display:flex;flex-wrap:wrap;margin-bottom:16px">
+          <span class="tag">PHP Laravel</span>
+          <span class="tag tag-fill">Redis</span>
+          <span class="tag tag-fill">SQL</span>
+          <span class="tag">Python</span>
+          <span class="tag">Postman</span>
+          <span class="tag">GitHub</span>
+        </div>
+
+        <div class="tbox"><strong>Redis caching layers</strong> — dropped query response times from several seconds to single-digit milliseconds.</div>
+        <div class="tbox"><strong>Payload compression</strong> via phpredis + IGBINARY + ZSTD — payloads shrunk to just 5% of original size.</div>
+        <div class="tbox"><strong>1,000+ lines</strong> of dead code eliminated — legacy endpoints, unused controllers, redundant modules.</div>
+        <div class="tbox"><strong>Automated API docs</strong> using Scramble — scalable, standardized RESTful documentation.</div>
+      </div>
+    </div>
+
+    <!-- Stats column -->
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="comic-panel-dark panel-shadow-w" data-panel="from-right" style="flex:1">
+        <div class="ht-fine" style="position:absolute;inset:0;opacity:.1;pointer-events:none" aria-hidden="true"></div>
+        <div style="position:relative;z-index:2">
+          <div class="cap-outline">Achievement Unlocked</div>
+          <div class="sfx" style="font-size:clamp(32px,5vw,52px);transform:rotate(-5deg);display:block;margin-bottom:8px" aria-label="CACHED!">CACHED!</div>
+          <div class="stat-big" style="color:#fff">10ms</div>
+          <div class="stat-lbl" style="color:rgba(255,255,255,.4)">Query via Redis</div>
+        </div>
+      </div>
+      <div class="comic-panel panel-shadow" data-panel="from-right" style="flex:1">
+        <div class="hatching" style="position:absolute;inset:0;opacity:.03;pointer-events:none" aria-hidden="true"></div>
+        <div style="position:relative;z-index:2">
+          <div class="cap">Payload Engineering</div>
+          <div class="sfx-inv" style="font-size:clamp(22px,3.5vw,38px);transform:rotate(3deg);display:block;margin-bottom:8px" aria-label="COMPRESSED!">COMPRESSED!</div>
+          <div class="stat-big">5%</div>
+          <div class="stat-lbl">of original payload</div>
+        </div>
+      </div>
+      <div class="comic-panel panel-shadow" data-panel="slam" style="flex:1">
+        <div style="position:relative;z-index:2">
+          <div class="cap">Dead Code Killed</div>
+          <div class="stat-big">1,000+</div>
+          <div class="stat-lbl">Lines deleted</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER II — THE MISSIONS (PROJECTS) -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER II</span>
+  <div class="line"></div>
+  <span class="title">THE MISSIONS</span>
+  <div class="line"></div>
+</div>
+
+<section id="projects" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="ht" style="position:absolute;inset:0;opacity:.06;pointer-events:none" aria-hidden="true"></div>
+
+  <!-- Dynamic Projects Grid -->
+  <div id="projects-grid" class="grid-2" style="gap:6px;max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:2" data-stagger>
+
+    <!-- Project 1: CookMate AI -->
+    <article style="background:#fff;border:3px solid #fff;position:relative;overflow:hidden;padding:28px" data-panel="from-left">
+      <div class="speedlines" style="opacity:.04;background:repeating-conic-gradient(from 0deg at 25% 75%,#fff 0deg 1.5deg,#000 1.5deg 11deg)" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div style="display:inline-block;border:2px solid #000;color:#000;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 12px;font-family:var(--font-body);margin-bottom:10px">Mission File #01</div>
+        <div class="proj-header">COOKMATE AI</div>
+        <div style="font-family:var(--font-body);font-size:10px;color:#444;letter-spacing:.08em;margin-bottom:14px;text-transform:uppercase">Personalized Recipe Generator</div>
+        <div style="position:absolute;top:20px;right:14px;transform:rotate(8deg)" aria-hidden="true">
+          <div class="sfx-inv" style="font-size:clamp(22px,3vw,36px);line-height:1.1">AI<br>POWERED!</div>
+        </div>
+        <div style="border:2px solid #000;padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;margin-bottom:10px;color:#000">Full-stack system using <strong>Google Gemini API</strong> to parse custom ingredients and manage dietary restrictions for dynamic recipe generation.</div>
+        <div style="border:2px solid #000;padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;margin-bottom:10px;color:#000">Specialized loops evaluate prep metrics — hyper-personalized ingredient breakdowns and cooking time estimates.</div>
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap">
+          <span class="tag tag-fill">React.js</span>
+          <span class="tag tag-fill">Node.js</span>
+          <span class="tag">Gemini API</span>
+          <span class="tag">Tailwind CSS</span>
+        </div>
+        <div style="margin-top:14px">
+          <a href="https://github.com/rahul-r8488" target="_blank" rel="noopener" class="btn-k">GITHUB →</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 2: Crypto WhatIf -->
+    <article class="comic-panel-dark" style="border:3px solid #333;position:relative;overflow:hidden;padding:28px" data-panel="from-right">
+      <div class="ht-fine" style="position:absolute;inset:0;opacity:.09;pointer-events:none" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div class="cap-outline" style="margin-bottom:10px">Mission File #02</div>
+        <div class="proj-header-inv">CRYPTO WHATIF</div>
+        <div style="font-family:var(--font-body);font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-bottom:14px;text-transform:uppercase">Investment Simulator</div>
+        <div style="position:absolute;top:20px;right:14px;transform:rotate(-6deg)" aria-hidden="true">
+          <div class="sfx" style="font-size:clamp(20px,2.8vw,32px);line-height:1.15">LIVE<br>DATA!</div>
+        </div>
+        <div class="tbox-dark">Modular financial tracker with API endpoints pulling historical market valuations from the <strong style="color:#fff">Coinlayer API</strong>.</div>
+        <div class="tbox-dark">Multi-tiered profit/loss charting with live market data integration and secure data channels.</div>
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap">
+          <span class="tag-w">React.js</span>
+          <span class="tag-w">Node.js</span>
+          <span class="tag-w">Express.js</span>
+          <span class="tag-w">Coinlayer API</span>
+        </div>
+        <div style="margin-top:14px">
+          <a href="https://github.com/rahul-r8488" target="_blank" rel="noopener" class="btn-primary" style="font-size:15px;padding:7px 18px">GITHUB →</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- Add More Projects CTA (future use) -->
+  <div style="text-align:center;margin-top:20px;position:relative;z-index:2">
+    <a href="https://github.com/rahul-r8488" target="_blank" rel="noopener" class="btn-outline" style="font-size:15px">SEE ALL ON GITHUB →</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER III — THE ARSENAL (SKILLS) -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER III</span>
+  <div class="line"></div>
+  <span class="title">THE ARSENAL</span>
+  <div class="line"></div>
+</div>
+
+<section id="skills" class="scene scene-light" style="min-height:auto;padding:40px">
+
+  <div style="max-width:1200px;margin:0 auto;width:100%">
+    <div class="grid-3" style="gap:6px">
+
+      <!-- Languages -->
+      <div class="comic-panel panel-shadow" data-panel="from-left">
+        <div style="position:relative;z-index:2">
+          <div class="cap">Languages</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <span class="tag tag-fill" style="font-size:18px;padding:7px 14px;display:block">C++</span>
+            <span class="tag tag-fill" style="font-size:18px;padding:7px 14px;display:block">JavaScript</span>
+            <span class="tag" style="font-size:17px;padding:7px 14px;display:block">PHP (Laravel)</span>
+            <span class="tag" style="font-size:17px;padding:7px 14px;display:block">Python</span>
+            <span class="tag" style="font-size:17px;padding:7px 14px;display:block">SQL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend + Frontend -->
+      <div class="comic-panel-dark" style="border:3px solid #000;position:relative;overflow:hidden;padding:28px" data-panel="from-bottom">
+        <div class="ht-fine" style="position:absolute;inset:0;opacity:.09;pointer-events:none" aria-hidden="true"></div>
+        <div style="position:relative;z-index:2">
+          <div class="cap-outline" style="margin-bottom:8px">Backend Core</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+            <span style="display:block;background:#fff;color:#000;padding:7px 14px;font-family:var(--font-display);font-size:18px;letter-spacing:.06em">Node.js</span>
+            <span style="display:block;border:2px solid #fff;color:#fff;padding:7px 14px;font-family:var(--font-display);font-size:18px;letter-spacing:.06em">Express.js</span>
+            <span style="display:block;background:#fff;color:#000;padding:7px 14px;font-family:var(--font-display);font-size:18px;letter-spacing:.06em">Redis Caching</span>
+            <span style="display:block;border:2px solid #fff;color:#fff;padding:7px 14px;font-family:var(--font-display);font-size:18px;letter-spacing:.06em">RESTful APIs</span>
+            <span style="display:block;border:2px solid #fff;color:#fff;padding:7px 14px;font-family:var(--font-display);font-size:18px;letter-spacing:.06em">JWT Auth</span>
+          </div>
+          <div class="cap-outline" style="margin-bottom:8px">Frontend</div>
+          <div style="display:flex;flex-wrap:wrap">
+            <span class="tag-w" style="font-size:16px">React.js</span>
+            <span class="tag-w" style="font-size:16px">Tailwind CSS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools, DB, Infra -->
+      <div style="display:flex;flex-direction:column;gap:6px" data-panel="from-right">
+        <div class="comic-panel panel-shadow" style="padding:20px">
+          <div class="cap" style="font-size:8px">Databases</div>
+          <div style="display:flex;flex-wrap:wrap;margin-top:8px">
+            <span class="tag tag-fill" style="font-size:16px">MongoDB</span>
+            <span class="tag tag-fill" style="font-size:16px">MySQL</span>
+          </div>
+        </div>
+        <div class="comic-panel panel-shadow" style="padding:20px">
+          <div class="cap" style="font-size:8px">Infrastructure & DevOps</div>
+          <div style="display:flex;flex-wrap:wrap;margin-top:8px">
+            <span class="tag" style="font-size:14px">Git</span>
+            <span class="tag tag-fill" style="font-size:14px">GitHub</span>
+            <span class="tag" style="font-size:14px">CI/CD</span>
+            <span class="tag" style="font-size:14px">RHEL Linux</span>
+            <span class="tag" style="font-size:14px">Virtual Machines</span>
+          </div>
+        </div>
+        <div class="comic-panel panel-shadow" style="padding:20px">
+          <div class="cap" style="font-size:8px">AI & Automation</div>
+          <div style="display:flex;flex-wrap:wrap;margin-top:8px">
+            <span class="tag" style="font-size:14px">Agentic AI</span>
+            <span class="tag" style="font-size:14px">Workflow Automation</span>
+            <span class="tag tag-fill" style="font-size:14px">AI-Assisted Dev</span>
+          </div>
+        </div>
+        <div class="comic-panel panel-shadow" style="padding:20px">
+          <div class="cap" style="font-size:8px">Concepts</div>
+          <div style="display:flex;flex-wrap:wrap;margin-top:8px">
+            <span class="tag tag-fill" style="font-size:14px">Data Structures</span>
+            <span class="tag" style="font-size:14px">VS Code</span>
+            <span class="tag" style="font-size:14px">Postman</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER IV — CODING PROFILES -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER IV</span>
+  <div class="line"></div>
+  <span class="title">THE BATTLEGROUNDS</span>
+  <div class="line"></div>
+</div>
+
+<section id="coding" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="ht" style="position:absolute;inset:0;opacity:.07;pointer-events:none" aria-hidden="true"></div>
+
+  <div style="max-width:800px;margin:0 auto;width:100%;position:relative;z-index:2">
+    <div data-panel="fade" style="text-align:center;margin-bottom:28px">
+      <div class="sfx" style="font-size:clamp(28px,4vw,52px);transform:rotate(-3deg);display:inline-block" aria-hidden="true">CODE ON!</div>
+    </div>
+
+    <div data-stagger style="display:flex;flex-direction:column;gap:6px">
+
+      <a href="https://github.com/rahul-r8488" target="_blank" rel="noopener" class="code-card">
+        <div class="code-icon" style="width:52px;height:52px;background:#000;border:2px solid #000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.04em;flex-shrink:0;text-align:center;line-height:1.2">GH</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.06em">GITHUB</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555">github.com/rahul-r8488</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--font-display);font-size:18px;letter-spacing:.05em">→</div>
+      </a>
+
+      <a href="https://leetcode.com/u/RYUGA8488/" target="_blank" rel="noopener" class="code-card">
+        <div class="code-icon" style="width:52px;height:52px;background:#000;border:2px solid #000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.04em;flex-shrink:0;text-align:center;line-height:1.2">LC</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.06em">LEETCODE</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555">leetcode.com/u/RYUGA8488</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--font-display);font-size:18px;letter-spacing:.05em">→</div>
+      </a>
+
+      <a href="https://codeforces.com/profile/RYUGA8488" target="_blank" rel="noopener" class="code-card">
+        <div class="code-icon" style="width:52px;height:52px;background:#000;border:2px solid #000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.04em;flex-shrink:0;text-align:center;line-height:1.2">CF</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.06em">CODEFORCES</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555">codeforces.com/profile/RYUGA8488</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--font-display);font-size:18px;letter-spacing:.05em">→</div>
+      </a>
+
+      <a href="https://www.geeksforgeeks.org/profile/ryugaugdu" target="_blank" rel="noopener" class="code-card">
+        <div class="code-icon" style="width:52px;height:52px;background:#000;border:2px solid #000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.04em;flex-shrink:0;text-align:center;line-height:1.2">GFG</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.06em">GEEKSFORGEEKS</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555">geeksforgeeks.org/profile/ryugaugdu</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--font-display);font-size:18px;letter-spacing:.05em">→</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER V — THE ACADEMY (EDUCATION) -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER V</span>
+  <div class="line"></div>
+  <span class="title">THE ACADEMY</span>
+  <div class="line"></div>
+</div>
+
+<section id="education" class="scene scene-light" style="min-height:auto;padding:40px">
+
+  <div style="max-width:900px;margin:0 auto;width:100%">
+
+    <div class="comic-panel panel-shadow" data-panel="from-left" style="position:relative;overflow:hidden">
+      <div class="hatching" style="position:absolute;inset:0;opacity:.025;pointer-events:none" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div class="cap" style="margin-bottom:18px">Academic Record</div>
+
+        <div class="edu-item">
+          <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">GRAPHIC ERA HILL UNIVERSITY</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">B.Tech — Computer Science & Engineering · Uttarakhand, India</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-family:var(--font-body);font-size:11px;color:#999">2022 – 2026 (Completed June 2026)</span>
+            <span class="edu-score">CGPA 8.0 / 10</span>
+          </div>
+        </div>
+
+        <div class="edu-item">
+          <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">WHITEHALL SCHOOL</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">Senior Secondary (XII) — CBSE Board · Haldwani, India</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-family:var(--font-body);font-size:11px;color:#999">2020</span>
+            <span class="edu-score">88.2%</span>
+          </div>
+        </div>
+
+        <div class="edu-item">
+          <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">WHITEHALL SCHOOL</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">Secondary (X) — CBSE Board · Haldwani, India</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-family:var(--font-body);font-size:11px;color:#999">2018</span>
+            <span class="edu-score">84.2%</span>
+          </div>
+        </div>
+
+        <!-- Decorative sfx -->
+        <div aria-hidden="true" style="position:absolute;bottom:12px;right:12px;transform:rotate(-8deg);opacity:.07">
+          <div class="sfx-inv" style="font-size:52px">GRADE A!</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER VI — CERTIFIED POWERS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER VI</span>
+  <div class="line"></div>
+  <span class="title">CERTIFIED POWERS</span>
+  <div class="line"></div>
+</div>
+
+<section id="certifications" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="ht-fine" style="position:absolute;inset:0;opacity:.08;pointer-events:none" aria-hidden="true"></div>
+
+  <div style="max-width:900px;margin:0 auto;width:100%;position:relative;z-index:2">
+
+    <div data-panel="fade" style="text-align:center;margin-bottom:28px">
+      <div class="sfx" style="font-size:clamp(24px,4vw,44px);transform:rotate(-2deg);display:inline-block" aria-hidden="true">VERIFIED!</div>
+    </div>
+
+    <div data-stagger style="display:flex;flex-direction:column;gap:8px">
+
+      <a href="https://www.geeksforgeeks.org/certificate/5e9b4eba0fd63d12fed076607b354c86" target="_blank" rel="noopener" class="cert-card">
+        <div class="cert-icon">GFG</div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.06em">MongoDB Developer's Toolkit</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555;margin-top:2px">GeeksForGeeks Academy</div>
+        </div>
+        <div>
+          <span class="verify">VERIFY →</span>
+        </div>
+      </a>
+
+      <a href="https://www.hackerrank.com/certificates/558662b1889c" target="_blank" rel="noopener" class="cert-card">
+        <div class="cert-icon">HR</div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.06em">Problem Solving (Basic)</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555;margin-top:2px">HackerRank</div>
+        </div>
+        <div>
+          <span class="verify">VERIFY →</span>
+        </div>
+      </a>
+
+      <a href="https://www.hackerrank.com/certificates/0da78f04b60e" target="_blank" rel="noopener" class="cert-card">
+        <div class="cert-icon">HR</div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.06em">Problem Solving (Intermediate)</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555;margin-top:2px">HackerRank</div>
+        </div>
+        <div>
+          <span class="verify">VERIFY →</span>
+        </div>
+      </a>
+
+      <a href="https://courses.cognitiveclass.ai/certificates/0d24cb434a9b4266a895749f8320becd" target="_blank" rel="noopener" class="cert-card">
+        <div class="cert-icon">IBM</div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.06em">Python 101 for Data Science</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#555;margin-top:2px">Cognitive Class — IBM</div>
+        </div>
+        <div>
+          <span class="verify">VERIFY →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER VII — SIGNAL RECEIVED (CONTACT) -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter-header">
+  <span class="num">CHAPTER VII</span>
+  <div class="line"></div>
+  <span class="title">SIGNAL RECEIVED</span>
+  <div class="line"></div>
+</div>
+
+<section id="contact" class="scene scene-light" style="min-height:auto;padding:40px">
+
+  <div class="grid-32" style="gap:6px;max-width:1200px;margin:0 auto;width:100%">
+
+    <!-- Contact panel -->
+    <div class="comic-panel-dark" style="border:3px solid #000;position:relative;overflow:hidden;padding:36px;min-height:380px" data-panel="from-left">
+      <div class="speedlines" style="opacity:.05" aria-hidden="true"></div>
+      <div class="ht-fine" style="position:absolute;inset:0;opacity:.08;pointer-events:none" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div class="cap-outline" style="margin-bottom:16px">Transmission Incoming</div>
+        <div class="sfx" style="font-size:clamp(38px,6vw,66px);transform:rotate(-4deg);display:block;margin-bottom:12px" aria-label="HIRE ME!">HIRE ME!</div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(24px,3.8vw,42px);color:#fff;line-height:.95;margin-bottom:6px">RAHUL SINGH RAWAT</h2>
+        <div style="font-family:var(--font-body);font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:20px">Backend Developer · Open to Full-Time Roles</div>
+        <div style="border-top:1px solid rgba(255,255,255,.12);padding-top:16px;margin-bottom:20px">
+          <div class="c-row"><span class="c-label">EMAIL</span><span class="c-val"><a href="mailto:rawatr0788@gmail.com">rawatr0788@gmail.com</a></span></div>
+          <div class="c-row"><span class="c-label">PHONE</span><span class="c-val"><a href="tel:+917060382205">+91-7060382205</a></span></div>
+          <div class="c-row"><span class="c-label">LOCATION</span><span class="c-val">Uttarakhand, India</span></div>
+          <div class="c-row"><span class="c-label">GITHUB</span><span class="c-val"><a href="https://github.com/rahul-r8488" target="_blank" rel="noopener">github.com/rahul-r8488</a></span></div>
+          <div class="c-row"><span class="c-label">LINKEDIN</span><span class="c-val"><a href="https://linkedin.com/in/rahul-singh-rawat-1082b3258" target="_blank" rel="noopener">linkedin.com/in/rahul-singh-rawat-1082b3258</a></span></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="mailto:rawatr0788@gmail.com" class="btn-primary" style="font-size:15px;padding:8px 18px">EMAIL ME</a>
+          <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="btn-outline" style="font-size:15px;padding:8px 18px">↓ RESUME</a>
+          <a href="https://linkedin.com/in/rahul-singh-rawat-1082b3258" target="_blank" rel="noopener" class="btn-outline" style="font-size:15px;padding:8px 18px">LINKEDIN</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closing panel -->
+    <div class="comic-panel panel-shadow" data-panel="from-right" style="display:flex;flex-direction:column;justify-content:space-between;overflow:hidden">
+      <div class="hatching" style="position:absolute;inset:0;opacity:.03;pointer-events:none" aria-hidden="true"></div>
+      <div style="position:relative;z-index:2">
+        <div class="cap" style="margin-bottom:14px">Author's Note</div>
+        <div class="tbox" style="font-size:13px;line-height:1.65">
+          "I build systems that are fast, clean, and built to last. B.Tech CSE graduate with fresher energy and professional precision — that's the Rawat guarantee."
+        </div>
+        <div class="tbox" style="font-size:12px;color:#555;line-height:1.5">
+          Completed B.Tech CSE at Graphic Era Hill University, June 2026. Available immediately for full-time backend roles.
+        </div>
+      </div>
+      <div style="position:relative;z-index:2;margin-top:24px;text-align:center" aria-hidden="true">
+        <div class="sfx-inv" style="font-size:clamp(30px,4.5vw,52px);transform:rotate(-4deg);display:block;line-height:1.05">TO BE<br>CONTINUED…</div>
+        <div style="font-family:var(--font-body);font-size:9px;color:#bbb;margin-top:10px;letter-spacing:.12em">END OF ISSUE #01</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- BACK COVER / FOOTER -->
+<!-- ══════════════════════════════════════════════ -->
+<footer style="background:#000;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:3px solid #fff" aria-label="Footer">
+  <span style="font-family:var(--font-display);font-size:13px;color:#fff;letter-spacing:.14em">RAHUL SINGH RAWAT · BACKEND DEVELOPER · ISSUE #01</span>
+  <span style="font-family:var(--font-body);font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.08em">© 2026 · UTTARAKHAND, INDIA</span>
+</footer>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- JAVASCRIPT — Cinematic Scroll Engine -->
+<!-- ══════════════════════════════════════════════ -->
+<script>
+/* ── SCROLL PROGRESS BAR ─────────── */
+const progressBar = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  progressBar.style.width = pct + '%';
+}, { passive: true });
+
+/* ── PANEL REVEAL (IntersectionObserver) ─ */
+const panels = document.querySelectorAll('[data-panel]');
+const staggerEls = document.querySelectorAll('[data-stagger]');
+
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // Slight delay per element for sequential feel
+      const delay = parseInt(entry.target.dataset.delay || 0);
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, delay);
+      revealObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+panels.forEach((el, i) => {
+  revealObs.observe(el);
+});
+
+const staggerObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      staggerObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+staggerEls.forEach(el => staggerObs.observe(el));
+
+/* ── SEQUENTIAL PANEL STAGGER in same section ─ */
+// Find panels in same parent and stagger them
+const allSections = document.querySelectorAll('section, .scene');
+allSections.forEach(section => {
+  const sectionPanels = section.querySelectorAll('[data-panel]');
+  sectionPanels.forEach((panel, idx) => {
+    panel.dataset.delay = idx * 100;
+  });
+});
+
+/* ── CURSOR SFX SPLASH ──────────────
+   Spider-Verse style: random comic words pop at click/tap */
+const sfxWords = ['POW!','ZAP!','BOOM!','PING!','CLICK!','ACK!','WHOOSH!','CACHE!','PUSH!','MERGE!'];
+function isDarkAtPoint(x, y) {
+  // Check what element is under the click and if it's on a dark background
+  const el = document.elementFromPoint(x, y);
+  if (!el) return false;
+  let node = el;
+  while (node && node !== document.body) {
+    const bg = window.getComputedStyle(node).backgroundColor;
+    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+      // Parse RGB
+      const m = bg.match(/\d+/g);
+      if (m) {
+        const brightness = (parseInt(m[0]) * 299 + parseInt(m[1]) * 587 + parseInt(m[2]) * 114) / 1000;
+        return brightness < 128;
+      }
+    }
+    node = node.parentElement;
+  }
+  return false;
+}
+function spawnSfx(x, y) {
+  const dark = isDarkAtPoint(x, y);
+  const el = document.createElement('div');
+  el.className = 'splash ' + (dark ? 'splash-dark' : 'splash-light');
+  el.textContent = sfxWords[Math.floor(Math.random() * sfxWords.length)];
+  el.style.left = (x - 30) + 'px';
+  el.style.top = (y - 20) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+}
+document.addEventListener('click', e => spawnSfx(e.clientX, e.clientY));
+document.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  spawnSfx(t.clientX, t.clientY);
+}, { passive: true });
+
+/* ── SKILL TAG HOVER ── */
+document.querySelectorAll('.tag,.tag-fill,.tag-w').forEach(t => {
+  t.addEventListener('mouseenter', () => { t.style.transition='transform .12s'; t.style.transform='translate(-2px,-3px) rotate(-1deg)'; });
+  t.addEventListener('mouseleave', () => { t.style.transform=''; });
+});
+
+/* ── SMOOTH SECTION TRANSITIONS
+   Darken/lighten nav bg based on section color */
+const darkSections = document.querySelectorAll('.scene-dark, .comic-panel-dark');
+const nav = document.querySelector('nav');
+
+/* ── SCROLL-SNAPPING SCENE FEEL
+   Slight parallax on hero halftone bg */
+const heroBg = document.querySelector('#hero .speedlines');
+window.addEventListener('scroll', () => {
+  if (heroBg) {
+    heroBg.style.transform = `translateY(${window.scrollY * 0.3}px)`;
+  }
+}, { passive: true });
+
+/* ── NAV HIGHLIGHT ON SCROLL ── */
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? '#fff' : '';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
