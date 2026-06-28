@@ -137,7 +137,7 @@ nav{
   padding:28px;
 }
 .comic-panel-dark{
-  border:3px solid #000;background:#000;
+  border:3px solid #000;background:#000;color:#fff;
   position:relative;overflow:hidden;
   padding:28px;
 }
@@ -150,7 +150,7 @@ nav{
 
 /* ── SKILL TAGS ─────────────────────────────── */
 .tag{
-  display:inline-block;border:2px solid #000;padding:4px 12px;
+  display:inline-block;border:2px solid #000;color:#000;padding:4px 12px;
   font-family:var(--font-display);font-size:15px;letter-spacing:.05em;
   margin:3px;cursor:default;transition:transform .12s;
 }
@@ -200,8 +200,8 @@ nav{
 .tbox-dark{border:1px solid rgba(255,255,255,.2);padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;color:rgba(255,255,255,.8);margin-bottom:10px}
 
 /* ── CONTACT ROW ─────────────────────────────── */
-.c-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:10px}
-.c-label{font-family:var(--font-display);font-size:15px;letter-spacing:.08em;color:rgba(255,255,255,.4);min-width:90px;flex-shrink:0}
+.c-row{display:flex;align-items:flex-start;gap:18px;margin-bottom:14px}
+.c-label{font-family:var(--font-display);font-size:15px;letter-spacing:.08em;color:rgba(255,255,255,.4);min-width:110px;flex-shrink:0}
 .c-val{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,.8);word-break:break-all;line-height:1.5}
 .c-val a{color:rgba(255,255,255,.8);text-decoration:none}
 .c-val a:hover{color:#fff;text-decoration:underline}
@@ -215,7 +215,7 @@ nav{
   transition:transform .15s, box-shadow .15s;
   position:relative;overflow:hidden;
 }
-.code-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 #000}
+.code-card:hover{transform:translate(-4px,-4px);box-shadow:6px 6px 0 rgba(255,255,255,.25)}
 .code-card-icon{
   width:52px;height:52px;background:#000;color:#fff;
   display:flex;align-items:center;justify-content:center;
@@ -234,7 +234,7 @@ nav{
   transition:transform .15s, box-shadow .15s;
   position:relative;overflow:hidden;
 }
-.cert-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 #000}
+.cert-card:hover{transform:translate(-4px,-4px);box-shadow:6px 6px 0 rgba(255,255,255,.25)}
 .cert-icon{
   width:52px;height:52px;background:#000;color:#fff;
   display:flex;align-items:center;justify-content:center;
@@ -289,7 +289,76 @@ nav{
 .divider{height:4px;background:#000;width:100%}
 .divider-w{height:3px;background:#fff;width:100%}
 
-/* RESPONSIVE */
+/* ── BACKGROUND ANIMATIONS ───────────────────── */
+@keyframes vortexSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes scanLines{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+@keyframes ghostFloat{
+  0%,100%{transform:translate(0,0) rotate(var(--r,0deg));opacity:var(--gop,.05)}
+  33%{transform:translate(12px,-22px) rotate(calc(var(--r,0deg) + 3deg));opacity:calc(var(--gop,.05)*1.6)}
+  66%{transform:translate(-8px,-12px) rotate(calc(var(--r,0deg) - 1.5deg));opacity:var(--gop,.05)}
+}
+@keyframes headerShimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+@keyframes htPulse{
+  0%,100%{opacity:.08;background-size:7px 7px}
+  50%{opacity:.12;background-size:9px 9px}
+}
+@keyframes dotDrift{
+  0%{background-position:0 0}100%{background-position:7px 7px}
+}
+
+/* Hero canvas */
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* Animated halftone for dark sections */
+.ht-dark-anim{
+  background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1px);
+  background-size:8px 8px;
+  animation:dotDrift 5s linear infinite, htPulse 7s ease-in-out infinite;
+}
+
+/* Scan lines overlay */
+.scan-lines-wrap{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;
+}
+.scan-lines-wrap::after{
+  content:'';position:absolute;
+  left:0;right:0;height:200%;top:0;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,transparent 3px,
+    rgba(255,255,255,.016) 3px,rgba(255,255,255,.016) 4px
+  );
+  animation:scanLines 7s linear infinite;
+}
+
+/* Ghost comic panels */
+.ghost-panel{
+  position:absolute;pointer-events:none;
+  border:2px solid rgba(255,255,255,.055);
+  animation:ghostFloat var(--dur,12s) ease-in-out infinite;
+  animation-delay:var(--del,0s);
+}
+
+/* Chapter header shimmer */
+.chapter-header{position:relative;overflow:hidden}
+.chapter-header::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.07) 50%,transparent 100%);
+  background-size:200% 100%;
+  animation:headerShimmer 5s ease-in-out infinite;
+}
+
+/* Light section subtle halftone drift */
+.ht-light-anim{
+  background-image:radial-gradient(circle,rgba(0,0,0,.85) .8px,transparent .8px);
+  background-size:6px 6px;
+  animation:dotDrift 8s linear infinite;
+  opacity:.025!important;
+}
+
 @media(max-width:700px){
   .grid-2,.grid-3,.grid-32,.grid-23{grid-template-columns:1fr}
   .scene{padding:60px 20px}
@@ -350,7 +419,7 @@ nav{
     <li><a href="#certifications">Certs</a></li>
     <li><a href="#contact">Signal</a></li>
   </ul>
-  <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="nav-cta">↓ RESUME</a>
+  <a href="https://drive.google.com/uc?export=download&id=1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E" class="nav-cta">↓ RESUME</a>
 </nav>
 
 <!-- ══════════════════════════════════════════════ -->
@@ -358,10 +427,12 @@ nav{
 <!-- ══════════════════════════════════════════════ -->
 <section id="hero" class="scene scene-dark" style="min-height:100vh;padding-top:60px">
 
+  <!-- Hero canvas vortex -->
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <!-- Speed lines -->
   <div class="speedlines" aria-hidden="true"></div>
-  <!-- Halftone -->
-  <div class="ht" style="position:absolute;inset:0;opacity:.07;pointer-events:none" aria-hidden="true"></div>
+  <!-- Halftone animated -->
+  <div class="ht-dark-anim" style="position:absolute;inset:0;pointer-events:none" aria-hidden="true"></div>
 
   <!-- Corner labels -->
   <div style="position:absolute;top:70px;left:28px" aria-hidden="true">
@@ -402,7 +473,7 @@ nav{
 
     <div data-panel="from-bottom" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
       <a href="#projects" class="btn-primary">VIEW MISSIONS</a>
-      <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="btn-outline">↓ DOWNLOAD RESUME</a>
+      <a href="https://drive.google.com/uc?export=download&id=1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E" class="btn-outline">↓ DOWNLOAD RESUME</a>
       <a href="#contact" class="btn-outline">SEND SIGNAL</a>
     </div>
 
@@ -503,21 +574,23 @@ nav{
 </div>
 
 <section id="projects" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="scan-lines-wrap" aria-hidden="true"></div>
   <div class="ht" style="position:absolute;inset:0;opacity:.06;pointer-events:none" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:220px;height:160px;top:12%;left:3%;--dur:14s;--del:0s;--r:-6deg" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:110px;height:90px;top:55%;right:5%;--dur:10s;--del:-4s;--r:8deg" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:180px;height:130px;bottom:8%;left:40%;--dur:18s;--del:-7s;--r:3deg" aria-hidden="true"></div>
 
   <!-- Dynamic Projects Grid -->
   <div id="projects-grid" class="grid-2" style="gap:6px;max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:2" data-stagger>
 
     <!-- Project 1: CookMate AI -->
-    <article style="background:#fff;border:3px solid #fff;position:relative;overflow:hidden;padding:28px" data-panel="from-left">
+    <article style="background:#fff;border:3px solid #fff;color:#000;position:relative;overflow:hidden;padding:28px" data-panel="from-left">
       <div class="speedlines" style="opacity:.04;background:repeating-conic-gradient(from 0deg at 25% 75%,#fff 0deg 1.5deg,#000 1.5deg 11deg)" aria-hidden="true"></div>
       <div style="position:relative;z-index:2">
         <div style="display:inline-block;border:2px solid #000;color:#000;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 12px;font-family:var(--font-body);margin-bottom:10px">Mission File #01</div>
         <div class="proj-header">COOKMATE AI</div>
         <div style="font-family:var(--font-body);font-size:10px;color:#444;letter-spacing:.08em;margin-bottom:14px;text-transform:uppercase">Personalized Recipe Generator</div>
-        <div style="position:absolute;top:20px;right:14px;transform:rotate(8deg)" aria-hidden="true">
-          <div class="sfx-inv" style="font-size:clamp(22px,3vw,36px);line-height:1.1">AI<br>POWERED!</div>
-        </div>
+
         <div style="border:2px solid #000;padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;margin-bottom:10px;color:#000">Full-stack system using <strong>Google Gemini API</strong> to parse custom ingredients and manage dietary restrictions for dynamic recipe generation.</div>
         <div style="border:2px solid #000;padding:12px 14px;font-family:var(--font-body);font-size:12px;line-height:1.6;margin-bottom:10px;color:#000">Specialized loops evaluate prep metrics — hyper-personalized ingredient breakdowns and cooking time estimates.</div>
         <div style="margin-top:14px;display:flex;flex-wrap:wrap">
@@ -539,9 +612,7 @@ nav{
         <div class="cap-outline" style="margin-bottom:10px">Mission File #02</div>
         <div class="proj-header-inv">CRYPTO WHATIF</div>
         <div style="font-family:var(--font-body);font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-bottom:14px;text-transform:uppercase">Investment Simulator</div>
-        <div style="position:absolute;top:20px;right:14px;transform:rotate(-6deg)" aria-hidden="true">
-          <div class="sfx" style="font-size:clamp(20px,2.8vw,32px);line-height:1.15">LIVE<br>DATA!</div>
-        </div>
+
         <div class="tbox-dark">Modular financial tracker with API endpoints pulling historical market valuations from the <strong style="color:#fff">Coinlayer API</strong>.</div>
         <div class="tbox-dark">Multi-tiered profit/loss charting with live market data integration and secure data channels.</div>
         <div style="margin-top:14px;display:flex;flex-wrap:wrap">
@@ -575,6 +646,7 @@ nav{
 </div>
 
 <section id="skills" class="scene scene-light" style="min-height:auto;padding:40px">
+  <div class="ht-light-anim" style="position:absolute;inset:0;pointer-events:none" aria-hidden="true"></div>
 
   <div style="max-width:1200px;margin:0 auto;width:100%">
     <div class="grid-3" style="gap:6px">
@@ -665,7 +737,10 @@ nav{
 </div>
 
 <section id="coding" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="scan-lines-wrap" aria-hidden="true"></div>
   <div class="ht" style="position:absolute;inset:0;opacity:.07;pointer-events:none" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:150px;height:110px;top:20%;right:6%;--dur:13s;--del:-2s;--r:-4deg" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:90px;height:70px;bottom:15%;left:8%;--dur:11s;--del:-6s;--r:7deg" aria-hidden="true"></div>
 
   <div style="max-width:800px;margin:0 auto;width:100%;position:relative;z-index:2">
     <div data-panel="fade" style="text-align:center;margin-bottom:28px">
@@ -735,27 +810,27 @@ nav{
 
         <div class="edu-item">
           <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">GRAPHIC ERA HILL UNIVERSITY</div>
-          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">B.Tech — Computer Science & Engineering · Uttarakhand, India</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#111;margin-bottom:10px">B.Tech — Computer Science & Engineering · Uttarakhand, India</div>
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <span style="font-family:var(--font-body);font-size:11px;color:#999">2022 – 2026 (Completed June 2026)</span>
-            <span class="edu-score">CGPA 8.0 / 10</span>
+            <span style="font-family:var(--font-body);font-size:11px;color:#333">2022 – 2026 (Completed June 2026)</span>
+            <span class="edu-score">CGPA 8.03 / 10</span>
           </div>
         </div>
 
         <div class="edu-item">
           <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">WHITEHALL SCHOOL</div>
-          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">Senior Secondary (XII) — CBSE Board · Haldwani, India</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#111;margin-bottom:10px">Senior Secondary (XII) — CBSE Board · Haldwani, India</div>
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <span style="font-family:var(--font-body);font-size:11px;color:#999">2020</span>
+            <span style="font-family:var(--font-body);font-size:11px;color:#333">2020</span>
             <span class="edu-score">88.2%</span>
           </div>
         </div>
 
         <div class="edu-item">
           <div style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,28px);margin-bottom:4px">WHITEHALL SCHOOL</div>
-          <div style="font-family:var(--font-body);font-size:11px;color:#666;margin-bottom:10px">Secondary (X) — CBSE Board · Haldwani, India</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:#111;margin-bottom:10px">Secondary (X) — CBSE Board · Haldwani, India</div>
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <span style="font-family:var(--font-body);font-size:11px;color:#999">2018</span>
+            <span style="font-family:var(--font-body);font-size:11px;color:#333">2018</span>
             <span class="edu-score">84.2%</span>
           </div>
         </div>
@@ -781,7 +856,10 @@ nav{
 </div>
 
 <section id="certifications" class="scene scene-dark" style="min-height:auto;padding:40px">
+  <div class="scan-lines-wrap" aria-hidden="true"></div>
   <div class="ht-fine" style="position:absolute;inset:0;opacity:.08;pointer-events:none" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:200px;height:140px;top:10%;left:5%;--dur:15s;--del:-3s;--r:-5deg" aria-hidden="true"></div>
+  <div class="ghost-panel" style="width:120px;height:95px;bottom:10%;right:6%;--dur:12s;--del:-8s;--r:6deg" aria-hidden="true"></div>
 
   <div style="max-width:900px;margin:0 auto;width:100%;position:relative;z-index:2">
 
@@ -860,18 +938,18 @@ nav{
       <div style="position:relative;z-index:2">
         <div class="cap-outline" style="margin-bottom:16px">Transmission Incoming</div>
         <div class="sfx" style="font-size:clamp(38px,6vw,66px);transform:rotate(-4deg);display:block;margin-bottom:12px" aria-label="HIRE ME!">HIRE ME!</div>
-        <h2 style="font-family:var(--font-display);font-size:clamp(24px,3.8vw,42px);color:#fff;line-height:.95;margin-bottom:6px">RAHUL SINGH RAWAT</h2>
-        <div style="font-family:var(--font-body);font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:20px">Backend Developer · Open to Full-Time Roles</div>
-        <div style="border-top:1px solid rgba(255,255,255,.12);padding-top:16px;margin-bottom:20px">
+        <h2 style="font-family:var(--font-display);font-size:clamp(24px,3.8vw,42px);color:#fff;line-height:1.2;margin-bottom:12px;letter-spacing:0.04em">RAHUL SINGH RAWAT</h2>
+        <div style="font-family:var(--font-body);font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:24px">Backend Developer · Open to Full-Time Roles</div>
+        <div style="border-top:1px solid rgba(255,255,255,.12);padding-top:20px;margin-bottom:28px">
           <div class="c-row"><span class="c-label">EMAIL</span><span class="c-val"><a href="mailto:rawatr0788@gmail.com">rawatr0788@gmail.com</a></span></div>
           <div class="c-row"><span class="c-label">PHONE</span><span class="c-val"><a href="tel:+917060382205">+91-7060382205</a></span></div>
           <div class="c-row"><span class="c-label">LOCATION</span><span class="c-val">Uttarakhand, India</span></div>
           <div class="c-row"><span class="c-label">GITHUB</span><span class="c-val"><a href="https://github.com/rahul-r8488" target="_blank" rel="noopener">github.com/rahul-r8488</a></span></div>
           <div class="c-row"><span class="c-label">LINKEDIN</span><span class="c-val"><a href="https://linkedin.com/in/rahul-singh-rawat-1082b3258" target="_blank" rel="noopener">linkedin.com/in/rahul-singh-rawat-1082b3258</a></span></div>
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
           <a href="mailto:rawatr0788@gmail.com" class="btn-primary" style="font-size:15px;padding:8px 18px">EMAIL ME</a>
-          <a href="https://drive.google.com/file/d/1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E/view?usp=sharing" target="_blank" rel="noopener" class="btn-outline" style="font-size:15px;padding:8px 18px">↓ RESUME</a>
+          <a href="https://drive.google.com/uc?export=download&id=1X1en-BvUs9PJaPlEMJt8u6-wb12MDE-E" class="btn-outline" style="font-size:15px;padding:8px 18px">↓ RESUME</a>
           <a href="https://linkedin.com/in/rahul-singh-rawat-1082b3258" target="_blank" rel="noopener" class="btn-outline" style="font-size:15px;padding:8px 18px">LINKEDIN</a>
         </div>
       </div>
@@ -1017,7 +1095,73 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-/* ── NAV HIGHLIGHT ON SCROLL ── */
+/* ── HERO CANVAS VORTEX ANIMATION ── */
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  const heroEl = document.getElementById('hero');
+  if (!canvas || !heroEl) return;
+  const ctx = canvas.getContext('2d');
+  let rotation = 0;
+  let raf;
+
+  function resize() {
+    canvas.width  = heroEl.offsetWidth;
+    canvas.height = heroEl.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  /* Floating square particles */
+  const dots = Array.from({ length: 28 }, () => ({
+    x: Math.random(),
+    y: Math.random() * 1.1,
+    s: Math.random() * 3.5 + 1,
+    sp: (Math.random() * 0.25 + 0.08) / 1000,
+    op: Math.random() * 0.18 + 0.04
+  }));
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    /* Vortex speed-lines */
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(rotation);
+    const R = Math.sqrt(W * W + H * H) * 0.7;
+    const N = 28;
+    for (let i = 0; i < N; i++) {
+      const a  = (i / N) * Math.PI * 2;
+      const gap = (Math.PI * 2 / N) * 0.32;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, a, a + gap);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.032)';
+      ctx.fill();
+    }
+    ctx.restore();
+
+    /* Particles */
+    dots.forEach(d => {
+      d.y -= d.sp;
+      if (d.y < -0.06) { d.y = 1.06; d.x = Math.random(); }
+      ctx.fillStyle = `rgba(255,255,255,${d.op})`;
+      ctx.fillRect(d.x * W, d.y * H, d.s, d.s);
+    });
+
+    rotation += 0.00065;
+    raf = requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* Pause when tab hidden */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else draw();
+  });
+})();
+
 const navLinks = document.querySelectorAll('.nav-links a');
 const sections = document.querySelectorAll('section[id]');
 window.addEventListener('scroll', () => {
